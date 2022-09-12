@@ -1,13 +1,10 @@
 
-
 ######################################
-
-
 ## IMPORTING THE DATA INTO R
 str(data)
 
-library(readxl)
-data <- read_excel ("Testing_market_hypo.xlsx", sheet=2)
+data <- read.csv ("clipboard", sep = "\t", header = TRUE, stringsAsFactors = TRUE)
+str(data)
 
 ## EXAMINING THE NAME
 names(data)
@@ -17,22 +14,28 @@ names(data)
 names(data) <- c("Sl.No", "RS","SO", "PDT", "INT","RG","RS1","PM","SVM", "PP","JB","LCC")
 
 # EXAMINING THE STRUCTURE OF THE DATA
-str(data)
+str(data$RS)
+
+data$RS <- as.numeric(data$RS)-1
+data$RS <- factor (data$RS)
 
 #COVERTING THE CATEGORICAL VARIABLES AS FACTORS AND GIVING SUITABLE REPRESENTATIONS
 #data$RS <- factor(data$RS, levels = c("Lost", "Won"), labels = c("0","1"))
+
+
 data$SO <- factor(data$SO)
 
 data$PDT <- factor(data$PDT)# simple factor coversion 
 levels (data$PDT)
+
 data$PDT <- factor(data$PDT, order = TRUE, levels = c("GTMSys", "Procsys", "LearnSys", "Finsys", "Lifesys","Logissys","ContactSys"))
-str(data$PDT)
+summary(data$PDT)
 
 
 data$INT <- factor(data$INT)
 levels (data$INT)
 
-
+summary(data$INT)
 data$INT <- factor(data$INT, order = TRUE, levels = c("Capital Markets", "Banks", "Defense", "Consumer goods", "Others","Security","Energy",
                                                       "Insurance", "Airline", "Finance", "Infrastructure","Mobility","Other Govt.",
                                                       "Govt.", "Telecom equipments","Health", "Clinical research","Agriculture"))
@@ -76,14 +79,18 @@ str(data)
 ##################################
 #CASE ANALYSIS
 
-#1.	The marketing team of WSES believes that the average sales value of the leads that they receive is at least 8 million dollars. The marketing team believes that the standard deviation of sale value is about 2 million dollars.
+#1.	The marketing team of WSES believes that the average sales value of the leads that they receive is at least 8 million dollars.
+#The marketing team believes that the standard deviation of sale value is about 2 million dollars.
 #Use an appropriate hypothesis test to check whether the average sales value in the population is at least 8 million dollars.
 ##################################
 #Answer
 mean(data$SVM)
 
+SE <- 2 / sqrt(1000)
+  
+  
 # calculating Z statistics & p value
-z_stat <- (mean(data$SVM) - 8) / (2 / sqrt(1000))
+z_stat <- (mean(data$SVM) - 8) /
 (2 / sqrt(1000))
 mean(data$SVM)
 
