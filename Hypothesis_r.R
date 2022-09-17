@@ -56,7 +56,7 @@ t_test
 #that the associated p value of the test is less than that of alpha (0.05), hence we reject the null
 #hypothesis, and infer that average weekly users during 2017-2018 is higher than that of 2015-2016.
 
-#q3
+#q3 & q4
 install.packages("sos")
 
 library(sos)
@@ -79,4 +79,73 @@ levels (data7$week)# how many levels are there in this factor vector
 anova1 <- aov(usage~week, data = data7)
 summary(anova1)
 model.tables(anova, type = "means")
+
+
+#---------------------------------------------------------------------------------------------
+# ASSIGNMENT
+
+#q5
+# Check for usage trend year-month wise 
+
+library(dplyr)
+
+Data <- clean_names(data)
+data_q4<-Data
+data_q4_f <- filter(data_q4, data_q4$month_year >= "2016-08-01")
+data_q4_monthwise <- group_by(data_q4_f,month_year)
+data_q4_summary <- summarise(data_q4_monthwise, usage = mean(usage))
+data_q4_summary
+
+plot(data_q4_summary$month_year, data_q4_summary$usage, type='o',
+      xlab = "Year Month", ylab = "Mean_Usage",
+      main = "Mean Use Month-wise"
+      )
+graphics.off() 
+par("mar") 
+par(mar=c(1,1,1,1))
+
+#Immediately after launch in August 2016, within 2 months, there was a spike in average usage, 
+#but that did not last long. 
+#But from September 2017, there was significant raise in the average usage which lasted for a 
+#longer time frame.
+
+
+#q6
+# Two sample T-test
+
+#H0: Mean disease access when conditions are favorable <= Mean disease access when conditions 
+#are not favorable 
+#Ha: Mean disease access when conditions are favorable > Mean disease access when conditions 
+#are not favorable 
+
+#---- For DISEASE 1 ----
+
+library(janitor)
+
+data_bela_w <- clean_names(data_bel_w)
+
+data_bela_w$flag<-factor(ifelse((data_bela_w$temperature>=20 
+                                  & data_bela_w$temperature<=24 
+                                  & data_bela_w$humidity>80),"Disease access","No Disease access"))
+
+data_bela_w$flag<-relevel(data_bela_w$flag,ref = "Disease access")
+
+t.test(data_bela_w$d1~data_bela_w$flag,data=data_bela_w,alternative="greater",var.eq=TRUE)
+
+# P value (0.0057) is less than 0.05(significance) - so we reject the NULL HYPOTHESIS
+
+data_dharw_w <- clean_names(data_dhar_w)
+
+data_dharw_w$flag<-factor(ifelse((data_dharw_w$temperature>=20 
+                                 & data_dharw_w$temperature<=24 
+                                 & data_dharw_w$relative_humidity>80),"Disease access"
+                                ,"No Disease access"))
+
+data_dharw_w$flag<-relevel(data_dharw_w$flag,ref = "Disease access")
+
+t.test(data_dharw_w$d1~data_dharw_w$flag,data=data_dharw_w,alternative="greater",var.eq=TRUE)
+
+# P value (0.000088) is less than 0.05(significance) - so we reject the NULL HYPOTHESIS
+
+#--------
 
